@@ -1,0 +1,5 @@
+venv
+migrations
+.env
+__pycache__
+notes.txt
