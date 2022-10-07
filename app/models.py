@@ -15,19 +15,18 @@ class User(db.Model):
     first_name = db.Column(db.String(150), nullable = False)
     last_name = db.Column(db.String(150), nullable = False)
     email = db.Column(db.String(150), nullable = False)
+    open_to_work = db.Column(db.Boolean, nullable = False)
     cohort = db.Column(db.String(150))
     grad_date = db.Column(db.DateTime)
-    open_to_work = db.Column(db.Boolean, nullable = False)
     company_id = db.Column(db.String, db.ForeignKey('company.id'))
 
-    def __init__(self, password, first_name, last_name, email, open_to_work, cohort = '', grad_date = '', company_id = ''):
+    def __init__(self, password, first_name, last_name, email, open_to_work, cohort = '', grad_date = None, company_id = None):
         self.id = self.set_id()
         self.password = self.set_password(password)
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.open_to_work = open_to_work
-        self.email = email
         self.cohort = cohort
         self.grad_date = grad_date
         self.company_id = company_id
@@ -38,6 +37,12 @@ class User(db.Model):
     def set_password(self, password):
         self.pw_hash = generate_password_hash(password)
         return self.pw_hash
+    
+    def check_password(self, input_password):
+        return check_password_hash(self.password, input_password)
+    
+    def __repr__(self):
+        return f'{self.first_name}, {self.last_name}, {self.email}'
 
 
 class Company(db.Model):
@@ -54,6 +59,9 @@ class Company(db.Model):
 
     def set_id(self):
         return str(uuid.uuid4())
+    
+    def __repr__(self):
+        return f'{self.name}'
 
 class Job(db.Model):
     id = db.Column(db.String, primary_key = True)
